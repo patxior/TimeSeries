@@ -7,6 +7,7 @@ Created on Fri Oct 23 09:13:03 2020
 """
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 import math
 import matplotlib.pyplot as plt
@@ -34,6 +35,32 @@ def create_data(n_train=50, n_test=10, show=False):
         plt.show()
     return [x_train, x_test]
 
+def load_UCR_data(path, folder):
+    '''
+    
+
+    Parameters
+    ----------
+    path : TYPE
+        DESCRIPTION.
+    folder : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    [pd.DataFrame, pd.DataFrame]
+
+    '''
+
+    file_train      = folder+'_TRAIN.tsv'
+    file_test       = folder+'_TEST.tsv'
+    full_path_train = path+folder+'/'+file_train
+    full_path_test  = path+folder+'/'+file_test
+
+    dataset_train = pd.read_csv(full_path_train, sep='\t', header=None)
+    dataset_test = pd.read_csv(full_path_test, sep='\t', header=None)
+    return [dataset_train, dataset_test]
+
 def define_autoencoder(input_dim, encoded_dim):
     # AUTOENCODER
     input_data = tf.keras.Input(shape=(input_dim,))
@@ -59,16 +86,32 @@ def define_autoencoder(input_dim, encoded_dim):
 
 
 if __name__ == "__main__":
-    x_train, x_test = create_data(show=True)
+    # x_train, x_test = create_data(show=True)
+    path_UCR = '/home/patxi/Documents/UCRArchive_2018/'
+    folder   = 'Beef'
+    path_UCR = '/home/patxi/Documents/UCRArchive_2018/'
+    dataset_train, dataset_test = load_UCR_data(path_UCR, folder)
+    x_train = dataset_train.iloc[:, 1:].to_numpy()    
+    x_test  = dataset_test.iloc[:, 1:].to_numpy() 
+    y_train = dataset_train.iloc[:, 0].to_numpy()
+    y_test  = dataset_test.iloc[:, 0].to_numpy()
+    plt.plot(x_train.transpose())
+    plt.show()
+    for clase in np.unique(y_train):
+        plt.plot(x_train[y_train==clase].transpose())
+        plt.show()
+    x_train = normalize(x_train)
+    x_test = normalize(x_test)
+
     input_dim   = x_train.shape[-1]
-    encoded_dim = 8
+    encoded_dim = 16
     autoencoder, encoder, decoder = define_autoencoder(input_dim, encoded_dim)
     autoencoder.fit(x_train, x_train,
                     epochs=100,
                     batch_size=16,
                     shuffle=True,
                     validation_data=(x_test, x_test),
-                    verbose=0,
+                    verbose=1,
                     callbacks=[
                         tf.keras.callbacks.TensorBoard(log_dir='./tmp/autoencoder'),
                         tf.keras.callbacks.EarlyStopping(patience=5),
@@ -76,3 +119,4 @@ if __name__ == "__main__":
                     )
     
     plt.plot(autoencoder.predict(x_test).transpose()); plt.show()
+    plt.plot(x_test.transpose()); plt.show()
