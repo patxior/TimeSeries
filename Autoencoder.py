@@ -7,7 +7,6 @@ Created on Fri Oct 23 09:13:03 2020
 """
 
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 import math
 import matplotlib.pyplot as plt
@@ -35,9 +34,6 @@ def create_data(n_train=50, n_test=10, show=False):
         plt.show()
     return [x_train, x_test]
 
-
-
-
 def define_autoencoder(input_dim, encoded_dim):
     # AUTOENCODER
     input_data = tf.keras.Input(shape=(input_dim,))
@@ -59,6 +55,8 @@ def define_autoencoder(input_dim, encoded_dim):
     # create the decoder model
     decoder = tf.keras.Model(encoded_input, deco)
     return autoencoder, encoder, decoder
+
+
 
 if __name__ == "__main__":
     x_train, x_test = create_data(show=True)
