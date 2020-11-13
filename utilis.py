@@ -26,11 +26,11 @@ def load_UCR_data(folder='ItalyPowerDemand', xy_split=False, plot=False):
         x_train = normalizer.transform(x_train)
         x_test  = normalizer.transform(x_test)
         if plot==True:
-            print('TRAIN')
+            plt.title('TRAIN data')
             for clase in np.unique(y_train):
                 plt.plot(x_train[y_train==clase].transpose(), color=colors[clase], alpha=0.05)
             plt.show()
-            print('\nTEST')
+            plt.title('TEST data')
             for clase in np.unique(y_test):
                 plt.plot(x_test[y_test==clase].transpose(), color=colors[clase], alpha=0.05)
             plt.show()        
