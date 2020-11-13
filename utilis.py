@@ -5,7 +5,7 @@ from sklearn.preprocessing import LabelEncoder, Normalizer
 colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
 
 
-def load_UCR_data(folder='ItalyPowerDemand', xy_split=False, plot=False):
+def load_UCR_data(folder='ItalyPowerDemand', xy_split=False, plot=False, expand_dims_for_conv=False):
     path_UCR = 'data/UCRArchive_2018/'
     file_train      = folder+'_TRAIN.tsv'
     file_test       = folder+'_TEST.tsv'
@@ -33,7 +33,10 @@ def load_UCR_data(folder='ItalyPowerDemand', xy_split=False, plot=False):
             plt.title('TEST data')
             for clase in np.unique(y_test):
                 plt.plot(x_test[y_test==clase].transpose(), color=colors[clase], alpha=0.05)
-            plt.show()        
+            plt.show()
+        if expand_dims_for_conv==True:
+            x_train = np.expand_dims(x_train, axis=2)
+            x_test = np.expand_dims(x_test, axis=2)
         return [x_train, y_train, x_test, y_test]
     else:
         return [dataset_train, dataset_test]
